@@ -1,0 +1,137 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="row">
+
+    <!-- LEFT: Add Task -->
+    <div class="col-md-4">
+        <div class="card shadow p-4">
+            <h4>Add New Task</h4>
+
+            <form method="POST" action="/add_task">
+
+                <input type="text" name="task"
+                       class="form-control mb-3"
+                       placeholder="Enter task..." required>
+
+                <select name="priority" class="form-select mb-3">
+                    <option value="High">High Priority</option>
+                    <option value="Medium" selected>Medium Priority</option>
+                    <option value="Low">Low Priority</option>
+                </select>
+
+                <input type="date" name="due_date"
+                       class="form-control mb-3" required>
+
+                <button class="btn btn-success w-100">
+                    Add Task
+                </button>
+
+            </form>
+        </div>
+    </div>
+
+
+    <!-- RIGHT: Task List -->
+    <div class="col-md-8">
+        <div class="card shadow p-4">
+
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h4>Your Tasks</h4>
+                <span class="badge bg-primary">
+                    {{ tasks|length }} Total
+                </span>
+            </div>
+
+            <!-- FILTER BUTTONS -->
+            <div class="mb-3">
+                <a href="/dashboard?filter=all"
+                   class="btn btn-sm {% if filter_type == 'all' %}btn-primary{% else %}btn-outline-primary{% endif %}">
+                    All
+                </a>
+
+                <a href="/dashboard?filter=completed"
+                   class="btn btn-sm {% if filter_type == 'completed' %}btn-success{% else %}btn-outline-success{% endif %}">
+                    Completed
+                </a>
+
+                <a href="/dashboard?filter=pending"
+                   class="btn btn-sm {% if filter_type == 'pending' %}btn-warning{% else %}btn-outline-warning{% endif %}">
+                    Pending
+                </a>
+            </div>
+
+            <!-- PROGRESS BAR -->
+            <div class="progress mb-4" style="height: 20px;">
+                <div class="progress-bar bg-success progress-dynamic"
+                     role="progressbar"
+                     data-progress="{{ progress }}">
+                    {{ progress }}%
+                </div>
+            </div>
+
+            {% if tasks %}
+                <ul class="list-group">
+                    {% for task in tasks %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center
+                        {% if task.due_date and not task.status and task.due_date < today %}
+                            list-group-item-danger
+                        {% endif %}">
+
+                        <span class="{% if task.status %}text-decoration-line-through text-muted{% endif %}">
+                            {{ task.task }}
+
+                            {% if task.priority == 'High' %}
+                                <span class="badge bg-danger ms-2">High</span>
+                            {% elif task.priority == 'Medium' %}
+                                <span class="badge bg-warning text-dark ms-2">Medium</span>
+                            {% else %}
+                                <span class="badge bg-success ms-2">Low</span>
+                            {% endif %}
+
+                            {% if task.due_date %}
+                                <small class="ms-2 text-secondary">
+                                    📅 {{ task.due_date }}
+                                </small>
+                            {% endif %}
+                        </span>
+
+                        <div>
+                            {% if not task.status %}
+                            <a href="/complete/{{task.id}}"
+                               class="btn btn-sm btn-warning">
+                                ✓
+                            </a>
+                            {% endif %}
+
+                            <a href="/delete/{{task.id}}"
+                               class="btn btn-sm btn-danger">
+                                ✕
+                            </a>
+                        </div>
+
+                    </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <div class="text-center text-muted mt-4">
+                    <h5>No tasks found 😌</h5>
+                </div>
+            {% endif %}
+
+        </div>
+    </div>
+
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const bar = document.querySelector(".progress-dynamic");
+    if (bar) {
+        const value = bar.getAttribute("data-progress");
+        bar.style.width = value + "%";
+    }
+});
+</script>
+
+{% endblock %}
