@@ -54,10 +54,11 @@
         }
 
         .center-container {
-            height: 100vh;
+            min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
+            padding: 24px;
         }
 
         .card {
@@ -80,8 +81,10 @@
 </head>
 
 <body>
+{% set show_auth_page = request.path in ['/login', '/register'] %}
+{% set show_dashboard_layout = session.get('user_id') and not show_auth_page %}
 
-{% if session.get('user_id') %}
+{% if show_dashboard_layout %}
 
     <!-- SIDEBAR -->
     <div class="sidebar">
@@ -99,18 +102,19 @@
     </div>
 
     <div class="content">
-        {% block content %}{% endblock %}
-    </div>
-
 {% else %}
-
     <div class="center-container">
         <div style="width:400px;">
             <h2 class="text-center mb-4" style="color:#8b5cf6;">💜 TaskFlow</h2>
+{% endif %}
+
             {% block content %}{% endblock %}
+
+{% if show_dashboard_layout %}
+    </div>
+{% else %}
         </div>
     </div>
-
 {% endif %}
 
 </body>
