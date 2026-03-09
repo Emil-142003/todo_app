@@ -3,16 +3,14 @@
 
 <div class="row g-4">
 
-    <!-- LEFT: Add Task -->
-    <div class="col-lg-4">
-        <div class="card p-4">
-            <h4 class="mb-3">Add New Task</h4>
+    <div class="col-xl-4 col-lg-5">
+        <div class="card p-4 h-100">
+            <h4 class="mb-2" style="color:#3f33b8; font-weight:700;">Create a Task</h4>
+            <p class="text-muted-soft mb-4">Plan your day with clear priorities and due dates.</p>
 
             <form method="POST" action="/add_task">
                 <label class="form-label text-muted-soft mb-1" for="task-input">Task title</label>
-                <input id="task-input" type="text" name="task"
-                       class="form-control mb-3"
-                       placeholder="Enter task..." required>
+                <input id="task-input" type="text" name="task" class="form-control mb-3" placeholder="e.g., Design weekly report" required>
 
                 <label class="form-label text-muted-soft mb-1" for="priority-select">Priority</label>
                 <select id="priority-select" name="priority" class="form-select mb-3">
@@ -22,115 +20,91 @@
                 </select>
 
                 <label class="form-label text-muted-soft mb-1" for="due-date-input">Due date</label>
-                <input id="due-date-input" type="date" name="due_date"
-                       class="form-control mb-4" required>
+                <input id="due-date-input" type="date" name="due_date" class="form-control mb-4" required>
 
-                <button class="btn btn-primary w-100" type="submit">
-                    + Add Task
-                </button>
+                <button class="btn btn-primary w-100 py-2" type="submit">+ Add Task</button>
             </form>
         </div>
     </div>
 
-    <!-- RIGHT: Task List -->
-    <div class="col-lg-8">
+    <div class="col-xl-8 col-lg-7">
         <div class="card p-4">
 
             <div class="d-flex justify-content-between align-items-center mb-3">
-                <h4 class="mb-0">Your Tasks</h4>
-                <span class="badge bg-primary rounded-pill px-3 py-2">
-                    {{ tasks|length }} Total
-                </span>
+                <h4 class="mb-0" style="font-weight:700;">Today Overview</h4>
+                <span class="badge pill text-bg-light border px-3 py-2">{{ tasks|length }} Tasks</span>
             </div>
 
-            <!-- FILTER BUTTONS -->
             <div class="d-flex gap-2 flex-wrap mb-3">
-                <a href="/dashboard?filter=all"
-                   class="btn btn-sm rounded-pill px-3 {% if filter_type == 'all' %}btn-primary{% else %}btn-outline-primary{% endif %}">
-                    All
-                </a>
-
-                <a href="/dashboard?filter=completed"
-                   class="btn btn-sm rounded-pill px-3 {% if filter_type == 'completed' %}btn-success{% else %}btn-outline-success{% endif %}">
-                    Completed
-                </a>
-
-                <a href="/dashboard?filter=pending"
-                   class="btn btn-sm rounded-pill px-3 {% if filter_type == 'pending' %}btn-warning{% else %}btn-outline-warning{% endif %}">
-                    Pending
-                </a>
+                <a href="/dashboard?filter=all" class="btn btn-sm pill px-3 {% if filter_type == 'all' %}btn-primary{% else %}btn-outline-primary{% endif %}">All</a>
+                <a href="/dashboard?filter=completed" class="btn btn-sm pill px-3 {% if filter_type == 'completed' %}btn-success{% else %}btn-outline-success{% endif %}">Completed</a>
+                <a href="/dashboard?filter=pending" class="btn btn-sm pill px-3 {% if filter_type == 'pending' %}btn-warning{% else %}btn-outline-warning{% endif %}">Pending</a>
             </div>
 
-            <!-- PROGRESS BAR -->
-            <p class="mb-2 text-muted-soft">{{ progress }}% complete</p>
-            <div class="progress mb-2" style="height: 16px; background-color: #0f1524;">
-                <div class="progress-bar bg-success progress-dynamic"
-                     role="progressbar"
-                     data-progress="{{ progress }}"
-                     aria-valuenow="{{ progress }}"
-                     aria-valuemin="0"
-                     aria-valuemax="100"></div>
+            <div class="p-3 mb-4" style="background: linear-gradient(120deg, #6858f8, #4b3fd8); border-radius: 18px; color: white;">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <strong>Progress</strong>
+                    <strong>{{ progress }}%</strong>
+                </div>
+                <div class="progress" style="height: 12px; background: rgba(255,255,255,0.35);">
+                    <div class="progress-bar bg-light progress-dynamic"
+                         role="progressbar"
+                         data-progress="{{ progress }}"
+                         aria-valuenow="{{ progress }}"
+                         aria-valuemin="0"
+                         aria-valuemax="100"
+                         aria-label="Task completion progress"></div>
+                </div>
+                <small class="d-block mt-2" style="opacity:0.95;">Keep going — you are building momentum.</small>
             </div>
-            <small class="text-muted-soft d-block mb-4">Track momentum and close out pending work.</small>
 
             {% if tasks %}
                 <ul class="list-group list-group-flush">
                     {% for task in tasks %}
                     {% set is_overdue = task.due_date and not task.status and task.due_date < today %}
-                    <li class="list-group-item d-flex justify-content-between align-items-start py-3 px-2 {% if is_overdue %}list-group-item-danger{% endif %}">
+                    <li class="list-group-item py-3 px-2">
+                        <div class="d-flex justify-content-between align-items-start gap-2 flex-wrap">
+                            <div>
+                                <div class="{% if task.status %}text-decoration-line-through text-muted{% endif %}" style="font-weight:600; color:#2d3157;">
+                                    {{ task.task }}
+                                </div>
 
-                        <div class="pe-3">
-                            <span class="d-block {% if task.status %}text-decoration-line-through text-muted{% endif %}">
-                                {{ task.task }}
-                            </span>
+                                <div class="mt-2 d-flex flex-wrap gap-2 align-items-center">
+                                    {% if task.priority == 'High' %}
+                                        <span class="badge text-bg-danger">High</span>
+                                    {% elif task.priority == 'Medium' %}
+                                        <span class="badge text-bg-warning">Medium</span>
+                                    {% else %}
+                                        <span class="badge text-bg-success">Low</span>
+                                    {% endif %}
 
-                            <div class="mt-2 d-flex flex-wrap gap-2 align-items-center">
-                                {% if task.priority == 'High' %}
-                                    <span class="badge bg-danger">High</span>
-                                {% elif task.priority == 'Medium' %}
-                                    <span class="badge bg-warning text-dark">Medium</span>
-                                {% else %}
-                                    <span class="badge bg-success">Low</span>
+                                    {% if task.due_date %}
+                                        <small class="{% if is_overdue %}text-danger fw-semibold{% else %}text-muted-soft{% endif %}">
+                                            📅 {{ task.due_date }}
+                                        </small>
+                                    {% endif %}
+
+                                    {% if is_overdue %}
+                                        <span class="badge text-bg-danger">Overdue</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <div class="d-flex gap-2">
+                                {% if not task.status %}
+                                <a href="/complete/{{task.id}}" class="btn btn-sm btn-outline-success" aria-label="Mark {{ task.task }} as complete">Complete</a>
                                 {% endif %}
-
-                                {% if task.due_date %}
-                                    <small class="{% if is_overdue %}text-danger fw-semibold{% else %}text-secondary{% endif %}">
-                                        📅 {{ task.due_date }}
-                                    </small>
-                                {% endif %}
-
-                                {% if is_overdue %}
-                                    <span class="badge text-bg-danger">Overdue</span>
-                                {% endif %}
+                                <a href="/delete/{{task.id}}" class="btn btn-sm btn-outline-danger" aria-label="Delete {{ task.task }}">Delete</a>
                             </div>
                         </div>
-
-                        <div class="d-flex gap-2">
-                            {% if not task.status %}
-                            <a href="/complete/{{task.id}}"
-                               class="btn btn-sm btn-outline-success"
-                               title="Mark task as complete">
-                                Complete
-                            </a>
-                            {% endif %}
-
-                            <a href="/delete/{{task.id}}"
-                               class="btn btn-sm btn-outline-danger"
-                               title="Delete task">
-                                Delete
-                            </a>
-                        </div>
-
                     </li>
                     {% endfor %}
                 </ul>
             {% else %}
-                <div class="text-center text-muted mt-4 py-4">
-                    <h5>No tasks found 😌</h5>
-                    <p class="mb-3">Create your first task to start building momentum.</p>
-                    <button id="create-task-cta" type="button" class="btn btn-primary btn-sm">
-                        Create your first task
-                    </button>
+                <div class="text-center py-4">
+                    <h5 class="mb-2" style="color:#3a3f65;">No tasks yet 😌</h5>
+                    <p class="text-muted-soft mb-3">Create your first task to start managing your day.</p>
+                    <button id="create-task-cta" type="button" class="btn btn-primary btn-sm px-3">Create first task</button>
                 </div>
             {% endif %}
 
@@ -143,7 +117,7 @@
 document.addEventListener("DOMContentLoaded", function() {
     const bar = document.querySelector(".progress-dynamic");
     if (bar) {
-        const value = bar.getAttribute("data-progress");
+        const value = Number(bar.getAttribute("data-progress") || 0);
         bar.style.width = value + "%";
         bar.textContent = value + "%";
     }

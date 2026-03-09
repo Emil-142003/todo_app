@@ -7,67 +7,79 @@
 
     <style>
         :root {
-            --bg: #0b0f19;
-            --surface: #1a1f2e;
-            --surface-soft: #111827;
-            --border: #2a2f45;
-            --text-main: #f1f5f9;
-            --text-muted: #94a3b8;
-            --brand: #8b5cf6;
+            --lavender-bg: #e9edf8;
+            --ink: #1f2440;
+            --muted: #7f88a8;
+            --purple-1: #6d5efc;
+            --purple-2: #4e3fe7;
+            --purple-3: #382fcb;
+            --card-white: #f7f9ff;
+            --border-soft: rgba(96, 107, 161, 0.2);
+        }
+
+        * {
+            box-sizing: border-box;
         }
 
         body {
             margin: 0;
-            background: radial-gradient(circle at top, #141b2d 0%, var(--bg) 45%);
-            color: var(--text-main);
-            font-family: 'Segoe UI', sans-serif;
+            min-height: 100vh;
+            background: radial-gradient(circle at 10% 10%, #f3f6ff 0%, var(--lavender-bg) 55%);
+            color: var(--ink);
+            font-family: 'Inter', 'Segoe UI', sans-serif;
         }
 
         .sidebar {
             width: 240px;
             height: 100vh;
-            background-color: var(--surface-soft);
+            background: linear-gradient(165deg, var(--purple-1), var(--purple-2) 60%, var(--purple-3));
             position: fixed;
-            padding: 20px;
-            border-right: 1px solid var(--border);
+            padding: 22px 16px;
+            border-right: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 8px 0 24px rgba(61, 49, 184, 0.18);
         }
 
         .sidebar h4 {
-            color: var(--brand);
+            color: #ffffff;
             font-weight: 700;
-            margin-bottom: 30px;
+            margin-bottom: 24px;
+            text-align: center;
         }
 
         .sidebar a {
             display: block;
-            color: #cbd5e1;
-            padding: 10px 12px;
+            color: rgba(255, 255, 255, 0.88);
+            padding: 11px 12px;
             text-decoration: none;
-            border-radius: 10px;
-            margin-bottom: 4px;
-            transition: background-color 0.2s ease, color 0.2s ease;
+            border-radius: 14px;
+            margin-bottom: 6px;
+            transition: transform 0.2s ease, background-color 0.2s ease;
         }
 
         .sidebar a:hover,
         .sidebar a.active {
+            background: rgba(255, 255, 255, 0.2);
             color: #ffffff;
-            background-color: #222941;
+            transform: translateX(2px);
         }
 
         .topbar {
             margin-left: 240px;
-            min-height: 70px;
-            border-bottom: 1px solid var(--border);
+            min-height: 80px;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 16px 30px;
-            gap: 12px;
+            padding: 18px 30px;
+        }
+
+        .topbar h5 {
+            font-weight: 700;
+            margin: 0;
         }
 
         .content {
             margin-left: 240px;
-            padding: 30px;
+            padding: 0 30px 30px;
         }
 
         .center-container {
@@ -79,39 +91,55 @@
         }
 
         .card {
-            background-color: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+            background: var(--card-white);
+            border: 1px solid var(--border-soft);
+            border-radius: 28px;
+            box-shadow: 0 14px 30px rgba(91, 101, 149, 0.12);
         }
 
-        input, select {
-            background-color: var(--bg) !important;
-            border: 1px solid var(--border) !important;
-            color: var(--text-main) !important;
+        .list-group-item {
+            border-color: #e0e5f5;
+            background: transparent;
+        }
+
+        input,
+        select {
+            background-color: #ffffff !important;
+            border: 1px solid #dde3f8 !important;
+            color: var(--ink) !important;
+            border-radius: 14px !important;
+            padding: 11px 12px !important;
         }
 
         input::placeholder {
-            color: var(--text-muted) !important;
+            color: #9ba4c1 !important;
         }
 
         input:focus,
         select:focus {
-            box-shadow: 0 0 0 0.2rem rgba(139, 92, 246, 0.2) !important;
-            border-color: var(--brand) !important;
+            box-shadow: 0 0 0 0.2rem rgba(109, 94, 252, 0.16) !important;
+            border-color: #8a7fff !important;
+        }
+
+        .btn {
+            border-radius: 14px;
         }
 
         .btn-primary {
-            background-color: var(--brand);
+            background: linear-gradient(120deg, var(--purple-1), var(--purple-2));
             border: none;
         }
 
         .btn-primary:hover {
-            background-color: #7c4cf0;
+            background: linear-gradient(120deg, #5f4ff4, #4637d8);
         }
 
         .text-muted-soft {
-            color: var(--text-muted);
+            color: var(--muted);
+        }
+
+        .pill {
+            border-radius: 999px;
         }
 
         @media (max-width: 991px) {
@@ -119,6 +147,8 @@
                 position: static;
                 width: 100%;
                 height: auto;
+                border-radius: 0 0 22px 22px;
+                margin-bottom: 16px;
             }
 
             .topbar,
@@ -135,27 +165,25 @@
 
 {% if show_dashboard_layout %}
 
-    <!-- SIDEBAR -->
     <div class="sidebar">
         <h4>💜 TaskFlow</h4>
-        <a href="/dashboard" class="{% if request.args.get('filter', 'all') == 'all' %}active{% endif %}">📋 Dashboard</a>
+        <a href="/dashboard" class="{% if request.args.get('filter', 'all') == 'all' %}active{% endif %}">🏠 Dashboard</a>
         <a href="/dashboard?filter=completed" class="{% if request.args.get('filter') == 'completed' %}active{% endif %}">✅ Completed</a>
         <a href="/dashboard?filter=pending" class="{% if request.args.get('filter') == 'pending' %}active{% endif %}">⏳ Pending</a>
-        <hr style="border-color:#2a2f45;">
+        <hr style="border-color:rgba(255,255,255,0.35);">
         <a href="/logout">🚪 Logout</a>
     </div>
 
-    <!-- TOPBAR -->
     <div class="topbar">
-        <h5 class="mb-0">Dashboard</h5>
-        <small class="text-muted-soft">Stay focused. Finish what matters.</small>
+        <h5>Manage your daily tasks</h5>
+        <small class="text-muted-soft">Simple. Focused. Productive.</small>
     </div>
 
     <div class="content">
 {% else %}
     <div class="center-container">
-        <div style="width:420px; max-width: 100%;">
-            <h2 class="text-center mb-4" style="color:#8b5cf6;">💜 TaskFlow</h2>
+        <div style="width:430px; max-width: 100%;">
+            <h2 class="text-center mb-4" style="color:#5443e7; font-weight: 700;">💜 TaskFlow</h2>
 {% endif %}
 
             {% block content %}{% endblock %}
