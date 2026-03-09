@@ -2,27 +2,38 @@
 <html lang="en">
 <head>
     <title>TaskFlow</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 
     <style>
+        :root {
+            --bg: #0b0f19;
+            --surface: #1a1f2e;
+            --surface-soft: #111827;
+            --border: #2a2f45;
+            --text-main: #f1f5f9;
+            --text-muted: #94a3b8;
+            --brand: #8b5cf6;
+        }
+
         body {
             margin: 0;
-            background-color: #0b0f19;
-            color: #f1f5f9;
+            background: radial-gradient(circle at top, #141b2d 0%, var(--bg) 45%);
+            color: var(--text-main);
             font-family: 'Segoe UI', sans-serif;
         }
 
         .sidebar {
             width: 240px;
             height: 100vh;
-            background-color: #111827;
+            background-color: var(--surface-soft);
             position: fixed;
             padding: 20px;
-            border-right: 1px solid #2a2f45;
+            border-right: 1px solid var(--border);
         }
 
         .sidebar h4 {
-            color: #8b5cf6;
+            color: var(--brand);
             font-weight: 700;
             margin-bottom: 30px;
         }
@@ -30,22 +41,28 @@
         .sidebar a {
             display: block;
             color: #cbd5e1;
-            padding: 10px 0;
+            padding: 10px 12px;
             text-decoration: none;
+            border-radius: 10px;
+            margin-bottom: 4px;
+            transition: background-color 0.2s ease, color 0.2s ease;
         }
 
-        .sidebar a:hover {
-            color: #8b5cf6;
+        .sidebar a:hover,
+        .sidebar a.active {
+            color: #ffffff;
+            background-color: #222941;
         }
 
         .topbar {
             margin-left: 240px;
-            height: 70px;
-            border-bottom: 1px solid #2a2f45;
+            min-height: 70px;
+            border-bottom: 1px solid var(--border);
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 0 30px;
+            padding: 16px 30px;
+            gap: 12px;
         }
 
         .content {
@@ -62,20 +79,52 @@
         }
 
         .card {
-            background-color: #1a1f2e;
-            border: 1px solid #2a2f45;
+            background-color: var(--surface);
+            border: 1px solid var(--border);
             border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
         }
 
         input, select {
-            background-color: #0b0f19 !important;
-            border: 1px solid #2a2f45 !important;
-            color: #f1f5f9 !important;
+            background-color: var(--bg) !important;
+            border: 1px solid var(--border) !important;
+            color: var(--text-main) !important;
+        }
+
+        input::placeholder {
+            color: var(--text-muted) !important;
+        }
+
+        input:focus,
+        select:focus {
+            box-shadow: 0 0 0 0.2rem rgba(139, 92, 246, 0.2) !important;
+            border-color: var(--brand) !important;
         }
 
         .btn-primary {
-            background-color: #8b5cf6;
+            background-color: var(--brand);
             border: none;
+        }
+
+        .btn-primary:hover {
+            background-color: #7c4cf0;
+        }
+
+        .text-muted-soft {
+            color: var(--text-muted);
+        }
+
+        @media (max-width: 991px) {
+            .sidebar {
+                position: static;
+                width: 100%;
+                height: auto;
+            }
+
+            .topbar,
+            .content {
+                margin-left: 0;
+            }
         }
     </style>
 </head>
@@ -89,22 +138,23 @@
     <!-- SIDEBAR -->
     <div class="sidebar">
         <h4>💜 TaskFlow</h4>
-        <a href="/dashboard">📋 Dashboard</a>
-        <a href="/dashboard?filter=completed">✅ Completed</a>
-        <a href="/dashboard?filter=pending">⏳ Pending</a>
+        <a href="/dashboard" class="{% if request.args.get('filter', 'all') == 'all' %}active{% endif %}">📋 Dashboard</a>
+        <a href="/dashboard?filter=completed" class="{% if request.args.get('filter') == 'completed' %}active{% endif %}">✅ Completed</a>
+        <a href="/dashboard?filter=pending" class="{% if request.args.get('filter') == 'pending' %}active{% endif %}">⏳ Pending</a>
         <hr style="border-color:#2a2f45;">
         <a href="/logout">🚪 Logout</a>
     </div>
 
     <!-- TOPBAR -->
     <div class="topbar">
-        <h5>Dashboard</h5>
+        <h5 class="mb-0">Dashboard</h5>
+        <small class="text-muted-soft">Stay focused. Finish what matters.</small>
     </div>
 
     <div class="content">
 {% else %}
     <div class="center-container">
-        <div style="width:400px;">
+        <div style="width:420px; max-width: 100%;">
             <h2 class="text-center mb-4" style="color:#8b5cf6;">💜 TaskFlow</h2>
 {% endif %}
 

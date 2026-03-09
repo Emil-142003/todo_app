@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TodoApp</title>
+    <link rel="stylesheet" href="src/styles.css" />
+  </head>
+  <body>
+    <main class="app">
+      <header class="app__header">
+        <h1>TodoApp</h1>
+        <p>A basic starter for tracking tasks.</p>
+      </header>
+
+      <form id="todo-form" class="todo-form" autocomplete="off">
+        <label for="todo-input" class="sr-only">Add task</label>
+        <input id="todo-input" type="text" placeholder="Add a task..." required />
+        <button type="submit">Add</button>
+      </form>
+
+      <section class="todo-list-wrapper" aria-live="polite">
+        <ul id="todo-list" class="todo-list"></ul>
+      </section>
+    </main>
+
+    <script src="src/app.js"></script>
+  </body>
+</html>
